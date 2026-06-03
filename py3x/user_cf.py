@@ -34,7 +34,7 @@ class UserCF(object):
                self.n_rec_movie, file=sys.stderr)
 
 
-    # 构建电影、评分字典
+    # 构建电影、评分字典，训练比为0.7
     def generate_dataset(self, filename, pivot=0.7):
         ''' load rating data and split it to training set and test set '''
         trainset_len = 0

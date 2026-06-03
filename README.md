@@ -4,20 +4,27 @@
 
 # 目录规划
 * data 测试用数据集合 
-* py3x 基于python的协同过滤算法实现
 * manual 相关资料集合  
 	* paper阅读分享
 	* 基础知识分享
+* outputs 
+    * itemcf_recommendation.csv 基于物品协同过滤的推荐表
+    * metrics.csv 算法指标（精确率、召回率）
+    * usercf_recommendation.csv 基于用户协同过滤的推荐表
+* py3x 基于python的协同过滤算法实现
+* references 引用信息
+* RS-tf 基于tensorflow实现的推荐系统，主要用于探索性研究，还没看
+* main.py 运行协同过滤算法的主脚本
 
 
 # 内容导航
 ## python 实现（主要用于原理理解）
-* ItemCF
-* UserCF
-* LFM
-* Graph—Based
+* ItemCF 基于物品的协同过滤算法
+* UserCF 基于用户的协同过滤算法
+* LFM 没看
+* Graph—Based 没看
 
-# 计划项(恩 就是挖坑的意思)
+# 计划项(原作挖坑，下面都没看，后续再考虑要不要删了或者实现)
 ## 推荐算实现
 ### 基于用户行为数据的推荐算法
 * 关联规则  
