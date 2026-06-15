@@ -13,7 +13,7 @@
     * usercf_recommendation.csv 基于用户协同过滤的推荐表
 * py3x 基于python的协同过滤算法实现
 * references 引用信息
-* RS-tf 基于tensorflow实现的推荐系统，主要用于探索性研究，还没看
+* RS-torch 基于PyTorch实现的推荐系统，包含DCN_torch和XSimGCL
 * main.py 运行协同过滤算法的主脚本
 
 

@@ -1,0 +1,2 @@
+ 20260608-170057,[command] python run_expid.py --expid DCN_test --gpu 0,[exp_id] DCN_test,[dataset_id] tiny_parquet,[train] N.A.,[val] logloss: 0.679279 - AUC: 1.000000,[test] logloss: 0.679279 - AUC: 1.000000
+ 20260608-170402,[command] python run_expid.py --expid DCN_test --gpu 0,[exp_id] DCN_test,[dataset_id] tiny_parquet,[train] N.A.,[val] logloss: 0.679279 - AUC: 1.000000,[test] logloss: 0.679279 - AUC: 1.000000
