@@ -1,13 +1,23 @@
 # DCN config
+# RecBole Context DCN orange recommendations for ML-1M:
+# learning_rate=1e-3, mlp_hidden_size=[512,512,512],
+# reg_weight=1, cross_layer_num=6, dropout_prob=0.2
 epochs: 500
 train_batch_size: 4096
+embedding_dim: 64
 learning_rate: 0.001
-weight_decay: 0.000001
+mlp_hidden_size: [512, 512, 512]
+reg_weight: 1
+cross_layer_num: 6
+dropout_prob: 0.2
 train_neg_per_positive: 2
 rating_threshold: 3
 topn: 10
 recommendation_topn: 100
-valid_interval: 1
+valid_interval: 5
 early_stop_patience: 10
 min_delta: 0.000001
 seed: 2020
+eval_user_batch_size: 512
+prediction_batch_size: 1048576
+use_amp: true

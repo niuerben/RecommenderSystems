@@ -1,9 +1,9 @@
 ![](manual/RecommenderSystems.png)
 
-# RecommenderSystems
-本项作为学习用途，对一些推荐系统算法进行实现和评估。包含 user_cf、item_cf、NCF/NeuMF、XSimGCL 等模型。
+# RecSys
+RecSys 是基于 [RecBole](https://github.com/RUCAIBox/RecBole) ，对推荐系统算法进行实现和评估的学习项目。包含 user_cf、item_cf、NCF/NeuMF、XSimGCL 等模型。
 
-# 目录
+## 目录
 - .specify # spec
 - manual # 手册
 - metric_server # 测评服务器
@@ -26,11 +26,15 @@ python main.py --model dcn --config RecSys/config/dcn.yaml
 ```
 
 ## 模型列表
-user_cf 基于用户的协同过滤
-item_cf 基于物品的协同过滤
-NCF
-NCF/NeuMF
-XSimGCL 等模型。
+| 模型              |  简介                |   命令                                             |
+| :---------------: | :-----------------: | :------------------------------------------------: |
+| user_cf           | 基于用户的协同过滤    | --model user_cf --config RecSys/config/user_cf.yaml |
+| item_cf           | 基于物品的协同过滤    | --model item_cf --config RecSys/config/item_cf.yaml |
+| NCF               |                     | --model ncf --config RecSys/config/ncf.yaml |
+| NCF/NeuMF         |                     | --model ncf --config RecSys/config/ncf.yaml |
+| XSimGCL           |                     | --model xsimgcl --config RecSys/config/xsimgcl.yaml |
+
+
 
 ## 推荐算法发展历程
 ![](manual/推荐系统模型发展历程拓扑图.png)

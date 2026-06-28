@@ -1,8 +1,6 @@
 import argparse
 import ast
-import csv
 import importlib.util
-import os
 import time
 from pathlib import Path
 
@@ -70,49 +68,6 @@ def config_get(config, *keys, default=None):
     return default
 
 
-def merge(moviesfile, ratingsfile, usersfile, outputfile):
-    os.makedirs(os.path.dirname(outputfile), exist_ok=True)
-
-    movies = {}
-    with open(moviesfile, "r", encoding="latin-1") as f:
-        for line in f:
-            movie_id, title, genres = line.rstrip("\n").split("::")
-            movies[movie_id] = (title, genres)
-
-    users = {}
-    with open(usersfile, "r", encoding="latin-1") as f:
-        for line in f:
-            user_id, gender, age, occupation, zipcode = line.rstrip("\n").split("::")
-            users[user_id] = (gender, age, occupation, zipcode)
-
-    with open(ratingsfile, "r", encoding="latin-1") as rf, open(
-        outputfile, "w", encoding="utf-8", newline=""
-    ) as wf:
-        writer = csv.writer(wf)
-        writer.writerow(
-            [
-                "user_id",
-                "movie_id",
-                "rating",
-                "timestamp",
-                "gender",
-                "age",
-                "occupation",
-                "zipcode",
-                "title",
-                "genres",
-            ]
-        )
-        for line in rf:
-            user_id, movie_id, rating, timestamp = line.rstrip("\n").split("::")
-            gender, age, occupation, zipcode = users[user_id]
-            title, genres = movies[movie_id]
-            writer.writerow(
-                [user_id, movie_id, rating, timestamp, gender, age, occupation, zipcode, title, genres]
-            )
-    return outputfile
-
-
 def run_ncf(module, config, paths):
     mlp_hidden = config_get(config, "mlp_hidden", "mlp_hidden_size", default=(32, 16, 8))
     if isinstance(mlp_hidden, str):
@@ -169,26 +124,28 @@ def run_xsimgcl(module, config, paths):
 
 
 def run_dcn(module, config, paths):
-    merged_file = paths["merged"]
-    if not merged_file.exists():
-        merge(str(paths["movies"]), str(paths["ratings"]), str(paths["users"]), str(merged_file))
-
     model = module.DCN(
         topn=config_get(config, "topn", default=10),
         rating_threshold=config_get(config, "rating_threshold", default=3),
-        epochs=config_get(config, "epochs", default=5),
-        batch_size=config_get(config, "batch_size", "train_batch_size", default=8192),
+        embedding_dim=config_get(config, "embedding_dim", "embedding_size", default=64),
+        mlp_hidden_size=config_get(config, "mlp_hidden_size", default=(512, 512, 512)),
+        cross_layer_num=config_get(config, "cross_layer_num", default=6),
+        dropout_prob=config_get(config, "dropout_prob", "dropout", default=0.2),
+        reg_weight=config_get(config, "reg_weight", default=1.0),
+        epochs=config_get(config, "epochs", default=500),
+        batch_size=config_get(config, "batch_size", "train_batch_size", default=4096),
         learning_rate=config_get(config, "learning_rate", default=1e-3),
-        weight_decay=config_get(config, "weight_decay", default=1e-6),
         train_neg_per_positive=config_get(config, "train_neg_per_positive", default=2),
-        seed=config_get(config, "seed", default=0),
+        seed=config_get(config, "seed", default=2020),
         recommendation_topn=config_get(config, "recommendation_topn", default=100),
-        valid_interval=config_get(config, "valid_interval", default=1),
+        valid_interval=config_get(config, "valid_interval", default=5),
         early_stop_patience=config_get(config, "early_stop_patience", default=10),
         min_delta=config_get(config, "min_delta", default=1e-6),
-        save_epoch_recommendations=False,
+        eval_user_batch_size=config_get(config, "eval_user_batch_size", default=512),
+        prediction_batch_size=config_get(config, "prediction_batch_size", default=1048576),
+        use_amp=config_get(config, "use_amp", default=True),
     )
-    model.generate_dataset(str(merged_file))
+    model.generate_dataset(str(paths["ratings"]))
     model.calc_movie_sim()
     model.evaluate()
     model.generate_recommendation(
@@ -255,8 +212,6 @@ def main():
     paths = {
         "ratings": DATA_DIR / "ratings.dat",
         "users": DATA_DIR / "users.dat",
-        "movies": DATA_DIR / "movies.dat",
-        "merged": DATA_DIR / "merged.dat",
         "output": OUTPUT_DIR / f"{model_name}_recommendation.csv",
     }
     start = time.time()
