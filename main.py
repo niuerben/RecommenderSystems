@@ -97,6 +97,28 @@ def run_ncf(module, config, paths):
     )
 
 
+def run_lightgcn(module, config, paths):
+    model = module.LightGCN(
+        topn=config_get(config, "topn", default=10),
+        recommendation_topn=config_get(config, "recommendation_topn", default=100),
+        embedding_dim=config_get(config, "embedding_dim", "embedding_size", default=64),
+        n_layers=config_get(config, "n_layers", default=3),
+        epochs=config_get(config, "epochs", default=500),
+        batch_size=config_get(config, "batch_size", "train_batch_size", default=2048),
+        learning_rate=config_get(config, "learning_rate", default=0.001),
+        reg_weight=config_get(config, "reg_weight", default=1e-4),
+        seed=config_get(config, "seed", default=2020),
+        valid_interval=config_get(config, "valid_interval", default=1),
+        early_stop_patience=config_get(config, "early_stop_patience", default=10),
+        min_delta=config_get(config, "min_delta", default=1e-6),
+        save_epoch_recommendations=False,
+    )
+    model.generate_dataset(str(paths["ratings"]), usersfile=str(paths["users"]))
+    model.calc_movie_sim()
+    model.evaluate()
+    model.generate_recommendation(filepath=str(paths["output"]), mask_valid=True)
+
+
 def run_xsimgcl(module, config, paths):
     model = module.XSimGCL(
         topn=config_get(config, "topn", default=10),
@@ -185,6 +207,7 @@ def run_item_cf(module, config, paths):
 RUNNERS = {
     "ncf": run_ncf,
     "xsimgcl": run_xsimgcl,
+    "lightgcn": run_lightgcn,
     "dcn": run_dcn,
     "user_cf": run_user_cf,
     "item_cf": run_item_cf,
@@ -193,7 +216,7 @@ RUNNERS = {
 
 def build_arg_parser():
     parser = argparse.ArgumentParser(description="RecSys unified runner.")
-    parser.add_argument("--model", required=True, help="模型名，例如 ncf、xsimgcl、dcn、user_cf、item_cf")
+    parser.add_argument("--model", required=True, help="模型名，例如 ncf、xsimgcl、lightgcn、dcn、user_cf、item_cf")
     parser.add_argument("--config", default=None, help="配置文件路径，例如 RecSys/config/ncf.yaml")
     return parser
 
